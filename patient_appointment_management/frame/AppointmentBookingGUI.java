@@ -5,7 +5,6 @@ import java.util.*;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import patient_appointment_management.*;
 import patient_appointment_management.entities.*;
 
 public class AppointmentBookingGUI extends JFrame implements IAppointmentBooking {

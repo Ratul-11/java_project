@@ -1,54 +1,19 @@
 === MEDICAL APPOINTMENT BOOKING SYSTEM ===
-Generated on: 2025-09-16 18:22:55
+Generated on: 2025-09-16 18:44:17
 Total Appointments: 2
 ===================================================
 
 APPOINTMENT #1
 ------------------------------
-Appointment ID: 10baf4c9-1b4e-4c3c-a79c-080a4a47a273
+Appointment ID: a7e48850-8a5c-4be3-aba0-6934caf549e5
 Status: SCHEDULED
-Created Date: 2025-09-16 18:22:26
+Created Date: 2025-09-16 18:44:05
 
 PATIENT INFORMATION:
-  Name: ishrak
+  Name: sdfg
   Age: 22
   Gender: Male
-  Patient ID: f3f063a2-e3e5-4aea-af8c-d7cf8bd3b0a3
-
-DOCTOR INFORMATION:
-  Doctor: Dr. John Smith
-  Specialty: Cardiology
-  Consultation Fee: $150.00
-
-APPOINTMENT SCHEDULE:
-  Date: Tue Sep 16 18:21:51 GMT+06:00 2025
-  Time: 11:00 - 12:00
-
-ISSUE DESCRIPTION:
-  complicated ektu
-
-MEDICAL TESTS:
-  - Blood Test ($50.00)
-  - X-Ray ($80.00)
-
-FINANCIAL DETAILS:
-  Consultation Fee: $150.00
-  Tests Total: $130.00
-  TOTAL AMOUNT: $280.00
-
-===================================================
-
-APPOINTMENT #2
-------------------------------
-Appointment ID: a87ad3d6-053f-4e9a-890e-2b1d4c6b3528
-Status: SCHEDULED
-Created Date: 2025-09-16 18:22:55
-
-PATIENT INFORMATION:
-  Name: ratul
-  Age: 23
-  Gender: Male
-  Patient ID: fa05f848-b51d-4dd4-93f1-118d879b7879
+  Patient ID: c3df3486-ff7e-4882-b518-50b97037ae62
 
 DOCTOR INFORMATION:
   Doctor: Dr. Sarah Johnson
@@ -56,22 +21,50 @@ DOCTOR INFORMATION:
   Consultation Fee: $120.00
 
 APPOINTMENT SCHEDULE:
-  Date: Tue Sep 16 18:21:51 GMT+06:00 2025
+  Date: Tue Sep 16 18:43:59 GMT+06:00 2025
   Time: 09:00 - 10:00
 
 ISSUE DESCRIPTION:
-  ektu comp[licated
+  asdf
 
 MEDICAL TESTS:
   - Blood Test ($50.00)
-  - X-Ray ($80.00)
-  - ECG ($60.00)
-  - Ultrasound ($100.00)
 
 FINANCIAL DETAILS:
   Consultation Fee: $120.00
-  Tests Total: $290.00
-  TOTAL AMOUNT: $410.00
+  Tests Total: $50.00
+  TOTAL AMOUNT: $170.00
+
+===================================================
+
+APPOINTMENT #2
+------------------------------
+Appointment ID: f77b100d-1840-41c1-8db8-3c36abe39c22
+Status: SCHEDULED
+Created Date: 2025-09-16 18:44:17
+
+PATIENT INFORMATION:
+  Name: asdf
+  Age: 22
+  Gender: Male
+  Patient ID: a798e57f-e2e5-4a04-b0e0-4d81905fb409
+
+DOCTOR INFORMATION:
+  Doctor: Dr. Michael Brown
+  Specialty: Orthopedics
+  Consultation Fee: $140.00
+
+APPOINTMENT SCHEDULE:
+  Date: Tue Sep 16 18:43:59 GMT+06:00 2025
+  Time: 09:00 - 10:00
+
+MEDICAL TESTS:
+  - ECG ($60.00)
+
+FINANCIAL DETAILS:
+  Consultation Fee: $140.00
+  Tests Total: $60.00
+  TOTAL AMOUNT: $200.00
 
 ===================================================
 
@@ -79,7 +72,7 @@ SUMMARY REPORT
 --------------------
 Appointments by Specialty:
   Dermatology: 1 appointment(s)
-  Cardiology: 1 appointment(s)
-Total Revenue: $690.00
+  Orthopedics: 1 appointment(s)
+Total Revenue: $370.00
 
-File saved on: 2025-09-16 18:22:55
+File saved on: 2025-09-16 18:44:17

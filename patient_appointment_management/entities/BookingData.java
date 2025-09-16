@@ -1,12 +1,10 @@
-package patient_appointment_management;
+package patient_appointment_management.entities;
 
 import java.io.*;
 import java.nio.file.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-import patient_appointment_management.entities.Appointment;
-import patient_appointment_management.entities.MedicalTest;
 
 public class BookingData {
     private List<Appointment> appointments;

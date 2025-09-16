@@ -1,7 +1,6 @@
-package patient_appointment_management;
+package patient_appointment_management.entities;
 
 import java.util.Date;
-import patient_appointment_management.entities.*;
 
 public interface IAppointmentBooking {
     boolean validatePatientInfo();
