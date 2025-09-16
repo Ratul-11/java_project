@@ -1,0 +1,40 @@
+=== MEDICAL APPOINTMENT BOOKING SYSTEM ===
+Generated on: 2025-09-16 22:33:18
+Total Appointments: 1
+===================================================
+
+APPOINTMENT #1
+------------------------------
+Appointment ID: 78a2241c-7b7f-4297-bc65-8c60a08b5ff5
+Status: SCHEDULED
+Created Date: 2025-09-16 22:33:18
+
+PATIENT INFORMATION:
+  Name: asdfg
+  Age: 223
+  Gender: Male
+  Patient ID: 31f662b3-1499-43a9-8159-ed0deb62b420
+
+DOCTOR INFORMATION:
+  Doctor: Dr. Assoc. Prof. Dr. Bijoy Dutta
+  Specialty: Cardiology
+  Consultation Fee: $150.00
+
+APPOINTMENT SCHEDULE:
+  Date: Tue Sep 16 22:33:07 GMT+06:00 2025
+  Time: 09:00 - 10:00
+
+ISSUE DESCRIPTION:
+  asdf
+
+MEDICAL TESTS:
+  - Blood Test ($50.00)
+
+FINANCIAL DETAILS:
+  Consultation Fee: $150.00
+  Tests Total: $50.00
+  TOTAL AMOUNT: $200.00
+
+===================================================
+
+File saved on: 2025-09-16 22:33:18

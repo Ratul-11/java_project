@@ -1,12 +1,11 @@
 package patient_appointment_management.entities;
 
-import java.util.Date;
 
 public interface IAppointmentBooking {
     boolean validatePatientInfo();
     void loadSpecialties();
     void loadDoctors(Specialty specialty);
-    void checkAvailability(Doctor doctor, Date date);
+    void checkAvailability(Doctor doctor);
     double calculateTotal();
     boolean submitAppointment();
     void resetForm();

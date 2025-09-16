@@ -1,52 +1,46 @@
 package patient_appointment_management.entities;
 
 import java.io.*;
-import java.nio.file.*;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+// ...existing code...
 
 public class BookingData {
-    private List<Appointment> appointments;
-    private static final String DATA_FOLDER = "data";
+    private static final int MAX_APPOINTMENTS = 100;
+    private Appointment[] appointments = new Appointment[MAX_APPOINTMENTS];
+    private int appointmentCount = 0;
+    private static final String DATA_FOLDER = "patient_appointment_management" + File.separator + "data";
     private static final String APPOINTMENTS_FILE = "appointments.txt";
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     
     public BookingData() {
-        this.appointments = new ArrayList<>();
         createDataFolder();
         loadAppointmentsFromFile();
     }
     
     private void createDataFolder() {
-        try {
-            Path dataPath = Paths.get(DATA_FOLDER);
-            if (!Files.exists(dataPath)) {
-                Files.createDirectories(dataPath);
-                System.out.println("Created data folder: " + dataPath.toAbsolutePath());
+        File dataDir = new File(DATA_FOLDER);
+        if (!dataDir.exists()) {
+            if (dataDir.mkdirs()) {
+                System.out.println("Created data folder: " + dataDir.getAbsolutePath());
+            } else {
+                System.err.println("Error creating data folder: " + dataDir.getAbsolutePath());
             }
-        } catch (IOException e) {
-            System.err.println("Error creating data folder: " + e.getMessage());
         }
     }
     
     public void saveAppointmentsToFile() {
         try {
-            Path filePath = Paths.get(DATA_FOLDER, APPOINTMENTS_FILE);
-            
-            try (PrintWriter writer = new PrintWriter(new FileWriter(filePath.toFile()))) {
+            File file = new File(DATA_FOLDER, APPOINTMENTS_FILE);
+            try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
                 writer.println("=== MEDICAL APPOINTMENT BOOKING SYSTEM ===");
-                writer.println("Generated on: " + dateFormat.format(new Date()));
-                writer.println("Total Appointments: " + appointments.size());
+                writer.println("Total Appointments: " + appointmentCount);
                 writer.println("=" + "=".repeat(50));
                 writer.println();
-                for (int i = 0; i < appointments.size(); i++) {
-                    Appointment apt = appointments.get(i);
+                for (int i = 0; i < appointmentCount; i++) {
+                    Appointment apt = appointments[i];
                     writer.println("APPOINTMENT #" + (i + 1));
                     writer.println("-".repeat(30));
                     writer.println("Appointment ID: " + apt.getAppointmentId());
                     writer.println("Status: " + apt.getStatus());
-                    writer.println("Created Date: " + dateFormat.format(apt.getCreatedDate()));
                     writer.println();
                     writer.println("PATIENT INFORMATION:");
                     writer.println("  Name: " + apt.getPatient().getName());
@@ -60,8 +54,6 @@ public class BookingData {
                     writer.println("  Consultation Fee: $" + String.format("%.2f", apt.getDoctor().getSpecialty().getConsultationFee()));
                     writer.println();
                     writer.println("APPOINTMENT SCHEDULE:");
-                    writer.println("  Date: " + apt.getTimeSlot().getDate());
-                    writer.println("  Time: " + apt.getTimeSlot().getStartTime() + " - " + apt.getTimeSlot().getEndTime());
                     writer.println();
                     if (apt.getIssueDescription() != null && !apt.getIssueDescription().trim().isEmpty()) {
                         writer.println("ISSUE DESCRIPTION:");
@@ -84,22 +76,8 @@ public class BookingData {
                     writer.println("=" + "=".repeat(50));
                     writer.println();
                 }
-                writer.println("SUMMARY REPORT");
-                writer.println("-".repeat(20));
-                Map<String, Long> specialtyCount = appointments.stream()
-                    .collect(Collectors.groupingBy(
-                        apt -> apt.getDoctor().getSpecialty().getSpecialtyName(),
-                        Collectors.counting()
-                    ));
-                writer.println("Appointments by Specialty:");
-                specialtyCount.forEach((specialty, count) -> 
-                    writer.println("  " + specialty + ": " + count + " appointment(s)"));
-                double totalRevenue = appointments.stream().mapToDouble(Appointment::getTotalAmount).sum();
-                writer.println("Total Revenue: $" + String.format("%.2f", totalRevenue));
-                writer.println();
-                writer.println("File saved on: " + dateFormat.format(new Date()));
             }
-            System.out.println("Appointments saved to: " + filePath.toAbsolutePath());
+            System.out.println("Appointments saved to: " + file.getAbsolutePath());
         } catch (IOException e) {
             System.err.println("Error saving appointments to file: " + e.getMessage());
             e.printStackTrace();
@@ -107,34 +85,110 @@ public class BookingData {
     }
     
     private void loadAppointmentsFromFile() {
-        try {
-            Path filePath = Paths.get(DATA_FOLDER, APPOINTMENTS_FILE);
-            if (Files.exists(filePath)) {
-                System.out.println("Found existing appointments file: " + filePath.toAbsolutePath());
-                System.out.println("Note: Loading from file not implemented in this version.");
+        appointmentCount = 0;
+        File file = new File(DATA_FOLDER, APPOINTMENTS_FILE);
+        if (!file.exists()) return;
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            Appointment current = null;
+            Patient patient = null;
+            Doctor doctor = null;
+            TimeSlot timeSlot = null;
+            Specialty specialty = null;
+            MedicalTest[] tests = new MedicalTest[10];
+            int testCount = 0;
+            String status = null;
+            String issueDescription = null;
+            String patientName = null, patientGender = null;
+            int patientAge = 0;
+            String doctorName = null, doctorSpecialty = null;
+            double consultationFee = 0.0;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (line.startsWith("APPOINTMENT #")) {
+                    // reset for new appointment
+                    testCount = 0;
+                    status = null; issueDescription = null;
+                    patientName = null; patientGender = null; patientAge = 0;
+                    doctorName = null; doctorSpecialty = null; consultationFee = 0.0;
+                } else if (line.startsWith("Appointment ID:")) {
+                    // skip
+                } else if (line.startsWith("Status:")) {
+                    status = line.substring(line.indexOf(":") + 1).trim();
+                } else if (line.startsWith("Name:")) {
+                    patientName = line.substring(line.indexOf(":") + 1).trim();
+                } else if (line.startsWith("Age:")) {
+                    try { patientAge = Integer.parseInt(line.substring(line.indexOf(":") + 1).trim()); } catch (NumberFormatException e) {}
+                } else if (line.startsWith("Gender:")) {
+                    patientGender = line.substring(line.indexOf(":") + 1).trim();
+                } else if (line.startsWith("Patient ID:")) {
+                    // skip
+                } else if (line.startsWith("Doctor:")) {
+                    doctorName = line.substring(line.indexOf(":") + 1).replace("Dr. ", "").trim();
+                } else if (line.startsWith("Specialty:")) {
+                    doctorSpecialty = line.substring(line.indexOf(":") + 1).trim();
+                } else if (line.startsWith("Consultation Fee:")) {
+                    String feeStr = line.substring(line.indexOf("$") + 1).trim();
+                    try { consultationFee = Double.parseDouble(feeStr); } catch (Exception e) {}
+                } else if (line.startsWith("ISSUE DESCRIPTION:")) {
+                    // next line is the description
+                    issueDescription = reader.readLine();
+                    if (issueDescription != null) issueDescription = issueDescription.trim();
+                } else if (line.startsWith("- ")) {
+                    // Medical test
+                    String testLine = line.substring(2).trim();
+                    int idx = testLine.lastIndexOf("($");
+                    if (idx > 0 && testCount < tests.length) {
+                        String testName = testLine.substring(0, idx).trim();
+                        String costStr = testLine.substring(idx + 2, testLine.length() - 1);
+                        double cost = 0.0;
+                        try { cost = Double.parseDouble(costStr); } catch (Exception e) {}
+                        tests[testCount++] = new MedicalTest(testName, cost);
+                    }
+                } else if (line.startsWith("TOTAL AMOUNT:")) {
+                    // skip
+                } else if (line.startsWith("=")) {
+                    // End of appointment, build objects
+                    if (patientName != null && doctorName != null && doctorSpecialty != null && appointmentCount < MAX_APPOINTMENTS) {
+                        specialty = new Specialty(doctorSpecialty, consultationFee);
+                        doctor = new Doctor(doctorName, specialty);
+                        timeSlot = new TimeSlot(); // No date/time
+                        patient = new Patient(patientName, patientAge, patientGender);
+                        current = new Appointment(patient, doctor, timeSlot);
+                        current.setStatus(status);
+                        current.setDescription(issueDescription);
+                        for (int i = 0; i < testCount; i++) current.addTest(tests[i]);
+                        appointments[appointmentCount++] = current;
+                    }
+                }
             }
         } catch (Exception e) {
-            System.err.println("Error checking for existing appointments file: " + e.getMessage());
+            System.err.println("Error loading appointments from file: " + e.getMessage());
         }
     }
     
     public boolean saveAppointment(Appointment appointment) {
-        appointments.add(appointment);
-        saveAppointmentsToFile();
-        return true;
+        if (appointmentCount < MAX_APPOINTMENTS) {
+            appointments[appointmentCount++] = appointment;
+            saveAppointmentsToFile();
+            return true;
+        }
+        return false;
     }
     
     public Appointment getAppointmentById(String id) {
-        return appointments.stream()
-            .filter(apt -> apt.getAppointmentId().equals(id))
-            .findFirst()
-            .orElse(null);
+        for (int i = 0; i < appointmentCount; i++) {
+            if (appointments[i].getAppointmentId().equals(id)) {
+                return appointments[i];
+            }
+        }
+        return null;
     }
     
     public boolean updateAppointment(Appointment appointment) {
-        for (int i = 0; i < appointments.size(); i++) {
-            if (appointments.get(i).getAppointmentId().equals(appointment.getAppointmentId())) {
-                appointments.set(i, appointment);
+        for (int i = 0; i < appointmentCount; i++) {
+            if (appointments[i].getAppointmentId().equals(appointment.getAppointmentId())) {
+                appointments[i] = appointment;
                 saveAppointmentsToFile();
                 return true;
             }
@@ -143,30 +197,50 @@ public class BookingData {
     }
     
     public boolean deleteAppointment(String id) {
-        boolean removed = appointments.removeIf(apt -> apt.getAppointmentId().equals(id));
-        if (removed) {
-            saveAppointmentsToFile();
+        for (int i = 0; i < appointmentCount; i++) {
+            if (appointments[i].getAppointmentId().equals(id)) {
+                // Shift left
+                for (int j = i; j < appointmentCount - 1; j++) {
+                    appointments[j] = appointments[j + 1];
+                }
+                appointments[--appointmentCount] = null;
+                saveAppointmentsToFile();
+                return true;
+            }
         }
-        return removed;
+        return false;
     }
     
-    public List<Appointment> getAppointmentsByPatient(String patientId) {
-        return appointments.stream()
-            .filter(apt -> apt.getPatient().getPatientId().equals(patientId))
-            .collect(Collectors.toList());
+    public Appointment[] getAppointmentsByPatient(String patientId) {
+        Appointment[] result = new Appointment[appointmentCount];
+        int count = 0;
+        for (int i = 0; i < appointmentCount; i++) {
+            if (appointments[i].getPatient().getPatientId().equals(patientId)) {
+                result[count++] = appointments[i];
+            }
+        }
+        return Arrays.copyOf(result, count);
     }
     
-    public List<Appointment> getAllAppointments() {
-        return new ArrayList<>(appointments);
+    public Appointment[] getAllAppointments() {
+        return Arrays.copyOf(appointments, appointmentCount);
     }
     
     public void backupAppointments() {
         String backupFileName = "appointments_backup_" + 
             new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".txt";
-        try {
-            Path backupPath = Paths.get(DATA_FOLDER, backupFileName);
-            Files.copy(Paths.get(DATA_FOLDER, APPOINTMENTS_FILE), backupPath);
-            System.out.println("Backup created: " + backupPath.toAbsolutePath());
+        File source = new File(DATA_FOLDER, APPOINTMENTS_FILE);
+        File backup = new File(DATA_FOLDER, backupFileName);
+        try (
+            FileInputStream in = new FileInputStream(source);
+            FileOutputStream out = new FileOutputStream(backup)
+        ) {
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = in.read(buffer)) > 0) {
+                out.write(buffer, 0, len);
+            }
+            System.out.println("Backup created: " + backup.getAbsolutePath());
         } catch (IOException e) {
             System.err.println("Error creating backup: " + e.getMessage());
         }

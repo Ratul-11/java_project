@@ -1,414 +1,122 @@
 package patient_appointment_management.frame;
 
 import java.awt.*;
-import java.util.*;
-import java.util.List;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+import java.awt.event.*;
 import patient_appointment_management.entities.*;
 
-public class AppointmentBookingGUI extends JFrame implements IAppointmentBooking {
-    
-    private JTextField nameField;
-    private JTextField ageField;
-    private JComboBox<String> genderComboBox;
-    private JComboBox<Specialty> specialtyDropdown;
-    private JComboBox<Doctor> doctorDropdown;
-    private JComboBox<TimeSlot> timeSlotDropdown;
-    private JTextArea issueTextArea;
-    private JPanel testsPanel;
-    private JLabel totalAmountLabel;
-    private JButton submitButton;
-    private JButton resetButton;
-    private JButton showAppointmentsButton;
-    private JButton deleteAppointmentButton;
-    
-    
-    private AppointmentService appointmentService;
-    private List<JCheckBox> testCheckboxes;
-    
-    public AppointmentBookingGUI() {
-        this.appointmentService = new AppointmentService();
-        this.testCheckboxes = new ArrayList<>();
-        initializeComponents();
-        setupEventHandlers();
-        createLayout();
-        pack();
-        setLocationRelativeTo(null);
-    }
-    
-    private void initializeComponents() {
-        setTitle("Medical Appointment Booking System");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
-        
-        nameField = new JTextField(20);
-        ageField = new JTextField(10);
-        genderComboBox = new JComboBox<>(new String[]{"Male", "Female", "Other"});
-        specialtyDropdown = new JComboBox<>();
-        doctorDropdown = new JComboBox<>();
-        timeSlotDropdown = new JComboBox<>();
-        issueTextArea = new JTextArea(4, 30);
-        issueTextArea.setWrapStyleWord(true);
-        issueTextArea.setLineWrap(true);
-        testsPanel = new JPanel(new GridLayout(0, 2));
-        totalAmountLabel = new JLabel("Total: $0.00");
-        totalAmountLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        submitButton = new JButton("Submit Appointment");
-        resetButton = new JButton("Reset Form");
-        showAppointmentsButton = new JButton("Show Appointments");
-        deleteAppointmentButton = new JButton("Delete Appointment");
-        
-        loadSpecialties();
-        loadAvailableTests();
-    }
-    
-    private void createLayout() {
-        setLayout(new BorderLayout());
-        
-        JPanel mainPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.anchor = GridBagConstraints.WEST;
-        
-        
-        gbc.gridx = 0; gbc.gridy = 0;
-        mainPanel.add(new JLabel("Name:"), gbc);
-        gbc.gridx = 1;
-        mainPanel.add(nameField, gbc);
-        
-        gbc.gridx = 0; gbc.gridy = 1;
-        mainPanel.add(new JLabel("Age:"), gbc);
-        gbc.gridx = 1;
-        mainPanel.add(ageField, gbc);
-        
-        gbc.gridx = 0; gbc.gridy = 2;
-        mainPanel.add(new JLabel("Gender:"), gbc);
-        gbc.gridx = 1;
-        mainPanel.add(genderComboBox, gbc);
-        
-        
-        gbc.gridx = 0; gbc.gridy = 3;
-        mainPanel.add(new JLabel("Specialty:"), gbc);
-        gbc.gridx = 1;
-        mainPanel.add(specialtyDropdown, gbc);
-        
-        gbc.gridx = 0; gbc.gridy = 4;
-        mainPanel.add(new JLabel("Doctor:"), gbc);
-        gbc.gridx = 1;
-        mainPanel.add(doctorDropdown, gbc);
-        
-        gbc.gridx = 0; gbc.gridy = 5;
-        mainPanel.add(new JLabel("Time Slot:"), gbc);
-        gbc.gridx = 1;
-        mainPanel.add(timeSlotDropdown, gbc);
-        
-        
-        gbc.gridx = 0; gbc.gridy = 6;
-        mainPanel.add(new JLabel("Issue Description:"), gbc);
-        gbc.gridx = 1;
-        mainPanel.add(new JScrollPane(issueTextArea), gbc);
-        
-        
-        gbc.gridx = 0; gbc.gridy = 7;
-        mainPanel.add(new JLabel("Medical Tests:"), gbc);
-        gbc.gridx = 1;
-        mainPanel.add(new JScrollPane(testsPanel), gbc);
-        
-        
-        gbc.gridx = 0; gbc.gridy = 8;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        mainPanel.add(totalAmountLabel, gbc);
-        
-        
-        JPanel buttonPanel = new JPanel(new FlowLayout());
-        buttonPanel.add(submitButton);
-        buttonPanel.add(resetButton);
-        buttonPanel.add(showAppointmentsButton);
-        buttonPanel.add(deleteAppointmentButton);
-        
-        add(mainPanel, BorderLayout.CENTER);
-        add(buttonPanel, BorderLayout.SOUTH);
-    }
-    
-    private void setupEventHandlers() {
-        specialtyDropdown.addActionListener(e -> onSpecialtySelected());
-        doctorDropdown.addActionListener(e -> onDoctorSelected());
-        timeSlotDropdown.addActionListener(e -> calculateTotal());
-        submitButton.addActionListener(e -> submitAppointment());
-        resetButton.addActionListener(e -> resetForm());
-        showAppointmentsButton.addActionListener(e -> showAppointments());
-        deleteAppointmentButton.addActionListener(e -> deleteAppointment());
-    }
-    
-    private void showAppointments() {
-        List<Appointment> appointments = appointmentService.getAllAppointments();
-        
-        if (appointments.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "No appointments found.", "Appointments", JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
-        
-        
-        String[] columnNames = {"ID", "Patient", "Doctor", "Specialty", "Date/Time", "Status", "Total"};
-        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        
-        
-        for (Appointment apt : appointments) {
-            Object[] rowData = {
-                apt.getAppointmentId().substring(0, 8) + "...",
-                apt.getPatient().getName() + " (" + apt.getPatient().getAge() + ")",
-                apt.getDoctor().getName(),
-                apt.getDoctor().getSpecialty().getSpecialtyName(),
-                apt.getTimeSlot().getStartTime() + "-" + apt.getTimeSlot().getEndTime(),
-                apt.getStatus(),
-                "$" + String.format("%.2f", apt.getTotalAmount())
-            };
-            tableModel.addRow(rowData);
-        }
-        
-        JTable table = new JTable(tableModel);
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table.getTableHeader().setReorderingAllowed(false);
-        
-        
-        JDialog dialog = new JDialog(this, "All Appointments", true);
-        dialog.setLayout(new BorderLayout());
-        
-        JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setPreferredSize(new Dimension(800, 400));
-        
-        JPanel infoPanel = new JPanel(new FlowLayout());
-        infoPanel.add(new JLabel("Total Appointments: " + appointments.size()));
-        
-        dialog.add(infoPanel, BorderLayout.NORTH);
-        dialog.add(scrollPane, BorderLayout.CENTER);
-        
-        JButton closeButton = new JButton("Close");
-        closeButton.addActionListener(e -> dialog.dispose());
-        JPanel buttonPanel = new JPanel(new FlowLayout());
-        buttonPanel.add(closeButton);
-        dialog.add(buttonPanel, BorderLayout.SOUTH);
-        
-        dialog.pack();
-        dialog.setLocationRelativeTo(this);
-        dialog.setVisible(true);
-    }
-    
-    private void deleteAppointment() {
-        List<Appointment> appointments = appointmentService.getAllAppointments();
-        
-        if (appointments.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "No appointments found to delete.", "Delete Appointment", JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
-        
-        
-        String[] appointmentDescriptions = new String[appointments.size()];
-        for (int i = 0; i < appointments.size(); i++) {
-            Appointment apt = appointments.get(i);
-            appointmentDescriptions[i] = String.format("%s - %s - Dr. %s (%s) - $%.2f",
-                apt.getPatient().getName(),
-                apt.getTimeSlot().getStartTime() + "-" + apt.getTimeSlot().getEndTime(),
-                apt.getDoctor().getName(),
-                apt.getStatus(),
-                apt.getTotalAmount()
-            );
-        }
-        
-        
-        String selectedAppointment = (String) JOptionPane.showInputDialog(
-            this,
-            "Select appointment to delete:",
-            "Delete Appointment",
-            JOptionPane.QUESTION_MESSAGE,
-            null,
-            appointmentDescriptions,
-            appointmentDescriptions[0]
-        );
-        
-        if (selectedAppointment != null) {
-            
-            int selectedIndex = -1;
-            for (int i = 0; i < appointmentDescriptions.length; i++) {
-                if (appointmentDescriptions[i].equals(selectedAppointment)) {
-                    selectedIndex = i;
-                    break;
-                }
-            }
-            
-            if (selectedIndex >= 0) {
-                
-                int confirm = JOptionPane.showConfirmDialog(
-                    this,
-                    "Are you sure you want to delete this appointment?\n\n" + selectedAppointment,
-                    "Confirm Deletion",
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.WARNING_MESSAGE
-                );
-                
-                if (confirm == JOptionPane.YES_OPTION) {
-                    Appointment appointmentToDelete = appointments.get(selectedIndex);
-                    boolean success = appointmentService.deleteAppointment(appointmentToDelete.getAppointmentId());
-                    
-                    if (success) {
-                        JOptionPane.showMessageDialog(this, "Appointment deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Failed to delete appointment.", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            }
-        }
-    }
-    
-    @Override
-    public boolean validatePatientInfo() {
-        try {
-            return !nameField.getText().trim().isEmpty() &&
-                   !ageField.getText().trim().isEmpty() &&
-                   Integer.parseInt(ageField.getText()) > 0;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-    
-    @Override
-    public void loadSpecialties() {
-        List<Specialty> specialties = appointmentService.getSpecialties();
-        specialtyDropdown.removeAllItems();
-        for (Specialty specialty : specialties) {
-            specialtyDropdown.addItem(specialty);
-        }
-    }
-    
-    @Override
-    public void loadDoctors(Specialty specialty) {
-        List<Doctor> doctors = appointmentService.getDoctorsBySpecialty(specialty);
-        doctorDropdown.removeAllItems();
-        for (Doctor doctor : doctors) {
-            doctorDropdown.addItem(doctor);
-        }
-        if (!doctors.isEmpty()) {
-            onDoctorSelected();
-        }
-    }
-    
-    @Override
-    public void checkAvailability(Doctor doctor, Date date) {
-        List<TimeSlot> slots = appointmentService.getAvailableSlots(doctor, date);
-        timeSlotDropdown.removeAllItems();
-        for (TimeSlot slot : slots) {
-            timeSlotDropdown.addItem(slot);
-        }
-        calculateTotal();
-    }
-    
-    private void onSpecialtySelected() {
-        Specialty selectedSpecialty = (Specialty) specialtyDropdown.getSelectedItem();
-        if (selectedSpecialty != null) {
-            loadDoctors(selectedSpecialty);
-        }
-    }
-    
-    private void onDoctorSelected() {
-        Doctor selectedDoctor = (Doctor) doctorDropdown.getSelectedItem();
-        if (selectedDoctor != null) {
-            checkAvailability(selectedDoctor, new Date());
-        }
-    }
-    
-    private void loadAvailableTests() {
-        List<MedicalTest> tests = appointmentService.getAvailableTests();
-        testsPanel.removeAll();
-        testCheckboxes.clear();
-        
-        for (MedicalTest test : tests) {
-            JCheckBox checkbox = new JCheckBox(test.getTestName() + " ($" + test.getCost() + ")");
-            checkbox.addActionListener(e -> calculateTotal());
-            testCheckboxes.add(checkbox);
-            testsPanel.add(checkbox);
-        }
-    }
-    
-    @Override
-    public double calculateTotal() {
-        double total = 0.0;
-        
-        
-        Specialty selectedSpecialty = (Specialty) specialtyDropdown.getSelectedItem();
-        if (selectedSpecialty != null) {
-            total += selectedSpecialty.getConsultationFee();
-        }
-        
-        
-        List<MedicalTest> allTests = appointmentService.getAvailableTests();
-        for (int i = 0; i < testCheckboxes.size() && i < allTests.size(); i++) {
-            if (testCheckboxes.get(i).isSelected()) {
-                total += allTests.get(i).getCost();
-            }
-        }
-        
-        totalAmountLabel.setText("Total: $" + String.format("%.2f", total));
-        return total;
-    }
-    
-    @Override
-    public boolean submitAppointment() {
-        if (!validatePatientInfo()) {
-            JOptionPane.showMessageDialog(this, "Please fill in all patient information correctly.");
-            return false;
-        }
-        if (doctorDropdown.getSelectedItem() == null || timeSlotDropdown.getSelectedItem() == null) {
-            JOptionPane.showMessageDialog(this, "Please select a doctor and time slot.");
-            return false;
-        }
-        try {
-            Patient patient = new Patient(
-                nameField.getText(),
-                Integer.parseInt(ageField.getText()),
-                genderComboBox.getSelectedItem().toString()
-            );
-            Doctor selectedDoctor = (Doctor) doctorDropdown.getSelectedItem();
-            TimeSlot selectedTimeSlot = (TimeSlot) timeSlotDropdown.getSelectedItem();
-            Appointment appointment = new Appointment(patient, selectedDoctor, selectedTimeSlot);
-            appointment.setIssueDescription(issueTextArea.getText());
+// Beginner-friendly Appointment Booking GUI
+public class AppointmentBookingGUI extends JFrame implements ActionListener {
+    private JTextField nameField, ageField;
+    private JComboBox<String> genderBox;
+    private JComboBox<Specialty> specialtyBox;
+    private JComboBox<Doctor> doctorBox;
+    private JComboBox<String> slotBox;
+    private JTextArea issueArea;
+    private JLabel totalLabel;
+    private JButton bookButton;
+    private AppointmentService service;
 
-            List<MedicalTest> allTests = appointmentService.getAvailableTests();
-            for (int i = 0; i < testCheckboxes.size() && i < allTests.size(); i++) {
-                if (testCheckboxes.get(i).isSelected()) {
-                    appointment.addTest(allTests.get(i));
+    public AppointmentBookingGUI() {
+        super("Appointment Booking");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(null);
+        setSize(400, 420);
+        setLocationRelativeTo(null);
+
+        // Initialize components
+        nameField = new JTextField();
+        ageField = new JTextField();
+        genderBox = new JComboBox<>(new String[]{"Male", "Female", "Other"});
+        specialtyBox = new JComboBox<>();
+        doctorBox = new JComboBox<>();
+        slotBox = new JComboBox<>();
+        issueArea = new JTextArea();
+        totalLabel = new JLabel("Total: $0.00");
+        bookButton = new JButton("Book");
+
+        // Set bounds for components
+    // Use hardcoded y-values for each row, like the sample
+    //step 0
+    package patient_appointment_management.frame;
+    import java.awt.*;
+    import javax.swing.*;
+    import java.awt.event.*;
+
+    //step 1
+    public class AppointmentBookingGUI extends JFrame implements ActionListener {
+        //step 2
+        private JTextField nameField, ageField;
+        private JComboBox genderBox, specialtyBox, doctorBox, slotBox;
+        private JTextArea issueArea;
+        private JLabel totalLabel;
+        private JButton bookButton;
+
+        //step 4
+        public AppointmentBookingGUI() {
+            //step 4(a)
+            super("Appointment Booking");
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            setLayout(null);
+            setSize(400, 420);
+            setLocationRelativeTo(null);
+
+            //step 4(b)
+            nameField = new JTextField();
+            ageField = new JTextField();
+            genderBox = new JComboBox(new String[]{"Male", "Female", "Other"});
+            specialtyBox = new JComboBox(new String[]{"Cardiology", "Dermatology", "Orthopedics", "Pediatrics"});
+            doctorBox = new JComboBox(new String[]{"Dr. A", "Dr. B", "Dr. C", "Dr. D"});
+            slotBox = new JComboBox(new String[]{"09:00-10:00", "11:00-12:00", "14:00-15:00"});
+            issueArea = new JTextArea();
+            totalLabel = new JLabel("Total: $0.00");
+            bookButton = new JButton("Book");
+
+            //step 4(c)
+            int h = 28;
+            addLabel("Name:", 20, 20, 80, h); addField(nameField, 110, 20, 180, h);
+            addLabel("Age:", 20, 56, 80, h); addField(ageField, 110, 56, 180, h);
+            addLabel("Gender:", 20, 92, 80, h); addField(genderBox, 110, 92, 180, h);
+            addLabel("Specialty:", 20, 128, 80, h); addField(specialtyBox, 110, 128, 180, h);
+            addLabel("Doctor:", 20, 164, 80, h); addField(doctorBox, 110, 164, 180, h);
+            addLabel("Time Slot:", 20, 200, 80, h); addField(slotBox, 110, 200, 180, h);
+            addLabel("Issue:", 20, 236, 80, h); addField(issueArea, 110, 236, 180, h + 20);
+            addField(totalLabel, 20, 280, 150, h);
+            addField(bookButton, 200, 280, 90, h);
+
+            //step 4(d)
+            bookButton.addActionListener(this);
+            setVisible(true);
+        }
+
+        //step 4(e)
+        private void addLabel(String text, int x, int y, int w, int h) {
+            JLabel label = new JLabel(text);
+            label.setBounds(x, y, w, h);
+            add(label);
+        }
+        private void addField(JComponent comp, int x, int y, int w, int h) {
+            comp.setBounds(x, y, w, h);
+            add(comp);
+        }
+
+        //step 4(f)
+        public void actionPerformed(ActionEvent e) {
+            if (e.getSource() == bookButton) {
+                String pname = nameField.getText();
+                String page = ageField.getText();
+                String pgender = genderBox.getSelectedItem().toString();
+                String spec = specialtyBox.getSelectedItem().toString();
+                String doc = doctorBox.getSelectedItem().toString();
+                String slot = slotBox.getSelectedItem().toString();
+                String issue = issueArea.getText();
+                if (pname.isEmpty() || page.isEmpty() || pgender.isEmpty() || spec.isEmpty() || doc.isEmpty() || slot.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Fill all fields.");
+                    return;
                 }
+                // Just show a message, no OOP logic
+                totalLabel.setText("Total: $100.00");
+                JOptionPane.showMessageDialog(this, "Booked!");
             }
-            boolean success = appointmentService.createAppointment(appointment);
-            if (success) {
-                JOptionPane.showMessageDialog(this, "Appointment booked successfully!", "Appointment Confirmed", JOptionPane.INFORMATION_MESSAGE);
-                resetForm();
-            }
-            return success;
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error booking appointment: " + e.getMessage());
-            return false;
         }
     }
-    
-    @Override
-    public void resetForm() {
-        nameField.setText("");
-        ageField.setText("");
-        genderComboBox.setSelectedIndex(0);
-        if (specialtyDropdown.getItemCount() > 0) {
-            specialtyDropdown.setSelectedIndex(0);
-        }
-        issueTextArea.setText("");
-        for (JCheckBox checkbox : testCheckboxes) {
-            checkbox.setSelected(false);
-        }
-        calculateTotal();
-    }
-}

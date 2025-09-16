@@ -1,55 +1,51 @@
 package patient_appointment_management.entities;
 
-import java.time.LocalTime;
-import java.util.*;
 
-public class Doctor {
-    private String doctorId;
-    private String name;
+public class Doctor extends Person {
     private Specialty specialty;
     private String qualifications;
     private int experience;
-    private List<TimeSlot> availability;
-    
-    public Doctor(String doctorId, String name, Specialty specialty) {
-        this.doctorId = doctorId;
-        this.name = name;
-        this.specialty = specialty;
-        this.availability = new ArrayList<>();
-    }
-    
+    private TimeSlot[] availability = new TimeSlot[10];
+    private int slotCount = 0;
 
-    public String getDoctorId() { return doctorId; }
-    public String getName() { return name; }
+    public Doctor(String name, Specialty specialty) {
+        super(name, 0, null);
+        this.specialty = specialty;
+    }
+
     public Specialty getSpecialty() { return specialty; }
     public String getQualifications() { return qualifications; }
     public int getExperience() { return experience; }
-    public List<TimeSlot> getAvailability() { return availability; }
-    
+    public TimeSlot[] getAvailability() {
+        return java.util.Arrays.copyOf(availability, slotCount);
+    }
     public void setQualifications(String qualifications) { this.qualifications = qualifications; }
     public void setExperience(int experience) { this.experience = experience; }
-    
     public void addTimeSlot(TimeSlot slot) {
-        if (slot != null && !availability.contains(slot)) {
-            availability.add(slot);
+        if (slot != null && !containsSlot(slot) && slotCount < availability.length) {
+            availability[slotCount++] = slot;
         }
     }
-
-    public void removeTimeSlot(TimeSlot slot) {
-        availability.remove(slot);
-    }
-
-    public boolean isAvailable(Date date, LocalTime time) {
-        for (TimeSlot slot : availability) {
-            if (slot.getDate().equals(date) && slot.getStartTime().equals(time) && slot.isAvailable()) {
-                return true;
-            }
+    private boolean containsSlot(TimeSlot slot) {
+        for (int i = 0; i < slotCount; i++) {
+            if (availability[i].equals(slot)) return true;
         }
         return false;
     }
-
+    public void removeTimeSlot(TimeSlot slot) {
+        for (int i = 0; i < slotCount; i++) {
+            if (availability[i].equals(slot)) {
+                for (int j = i; j < slotCount - 1; j++) {
+                    availability[j] = availability[j + 1];
+                }
+                availability[--slotCount] = null;
+                break;
+            }
+        }
+    }
+    // Removed isAvailable(Date, LocalTime) for beginner simplicity
     @Override
-    public String toString() {
-        return String.format("Dr. %s (%s)", name, specialty.getSpecialtyName());
+    public String getRole() {
+        return "Doctor";
     }
 }
