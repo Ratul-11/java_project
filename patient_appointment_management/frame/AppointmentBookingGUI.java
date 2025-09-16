@@ -367,25 +367,20 @@ public class AppointmentBookingGUI extends JFrame implements IAppointmentBooking
             JOptionPane.showMessageDialog(this, "Please fill in all patient information correctly.");
             return false;
         }
-        
         if (doctorDropdown.getSelectedItem() == null || timeSlotDropdown.getSelectedItem() == null) {
             JOptionPane.showMessageDialog(this, "Please select a doctor and time slot.");
             return false;
         }
-        
         try {
             Patient patient = new Patient(
                 nameField.getText(),
                 Integer.parseInt(ageField.getText()),
                 genderComboBox.getSelectedItem().toString()
             );
-            
             Doctor selectedDoctor = (Doctor) doctorDropdown.getSelectedItem();
             TimeSlot selectedTimeSlot = (TimeSlot) timeSlotDropdown.getSelectedItem();
-            
             Appointment appointment = new Appointment(patient, selectedDoctor, selectedTimeSlot);
             appointment.setIssueDescription(issueTextArea.getText());
-            
             // Add selected tests
             List<MedicalTest> allTests = appointmentService.getAvailableTests();
             for (int i = 0; i < testCheckboxes.size() && i < allTests.size(); i++) {
@@ -393,31 +388,12 @@ public class AppointmentBookingGUI extends JFrame implements IAppointmentBooking
                     appointment.addTest(allTests.get(i));
                 }
             }
-            
             boolean success = appointmentService.createAppointment(appointment);
             if (success) {
-                // Show success message with file save confirmation
-                String message = String.format(
-                    "Appointment booked successfully!\n\n" +
-                    "Patient: %s\n" +
-                    "Doctor: Dr. %s\n" +
-                    "Specialty: %s\n" +
-                    "Time: %s-%s\n" +
-                    "Total Amount: $%.2f\n\n" +
-                    "Appointment details saved to: data/appointments.txt",
-                    patient.getName(),
-                    selectedDoctor.getName(),
-                    selectedDoctor.getSpecialty().getSpecialtyName(),
-                    selectedTimeSlot.getStartTime(),
-                    selectedTimeSlot.getEndTime(),
-                    appointment.getTotalAmount()
-                );
-                
-                JOptionPane.showMessageDialog(this, message, "Appointment Confirmed", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Appointment booked successfully!", "Appointment Confirmed", JOptionPane.INFORMATION_MESSAGE);
                 resetForm();
             }
             return success;
-            
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error booking appointment: " + e.getMessage());
             return false;

@@ -1,0 +1,47 @@
+=== MEDICAL APPOINTMENT BOOKING SYSTEM ===
+Generated on: 2025-09-16 18:08:58
+Total Appointments: 1
+===================================================
+
+APPOINTMENT #1
+------------------------------
+Appointment ID: 912d5b1b-6c52-47db-9807-d4d698488f77
+Status: SCHEDULED
+Created Date: 2025-09-16 18:08:28
+
+PATIENT INFORMATION:
+  Name: rat
+  Age: 23
+  Gender: Male
+  Patient ID: a6dde884-e55e-4e79-a539-34336ecb0a25
+
+DOCTOR INFORMATION:
+  Doctor: Dr. John Smith
+  Specialty: Cardiology
+  Consultation Fee: $150.00
+
+APPOINTMENT SCHEDULE:
+  Date: Tue Sep 16 18:07:45 GMT+06:00 2025
+  Time: 09:00 - 10:00
+
+ISSUE DESCRIPTION:
+  asdf
+
+MEDICAL TESTS:
+  - Blood Test ($50.00)
+  - ECG ($60.00)
+
+FINANCIAL DETAILS:
+  Consultation Fee: $150.00
+  Tests Total: $110.00
+  TOTAL AMOUNT: $260.00
+
+===================================================
+
+SUMMARY REPORT
+--------------------
+Appointments by Specialty:
+  Cardiology: 1 appointment(s)
+Total Revenue: $260.00
+
+File saved on: 2025-09-16 18:08:58

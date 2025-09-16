@@ -1,6 +1,7 @@
 package patient_appointment_management;
 
 import patient_appointment_management.entities.Appointment;
+import patient_appointment_management.entities.MedicalTest;
 import java.io.*;
 import java.nio.file.*;
 import java.text.SimpleDateFormat;
