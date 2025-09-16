@@ -16,7 +16,7 @@ public class Patient {
         this.gender = gender;
     }
     
-    // Getters and Setters
+
     public String getPatientId() { return patientId; }
     public String getName() { return name; }
     public int getAge() { return age; }
@@ -28,12 +28,12 @@ public class Patient {
     public void setGender(String gender) { this.gender = gender; }
     public void setContactInfo(String contactInfo) { this.contactInfo = contactInfo; }
     
-    public boolean validateInfo() {
-        return name != null && !name.trim().isEmpty() && age > 0 && gender != null;
+    public boolean isValid() {
+        return name != null && !name.isBlank() && age > 0 && gender != null && !gender.isBlank();
     }
-    
+
     @Override
     public String toString() {
-        return name + " (" + age + ", " + gender + ")";
+        return String.format("%s (%d, %s)", name, age, gender);
     }
 }

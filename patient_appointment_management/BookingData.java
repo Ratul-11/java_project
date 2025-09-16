@@ -1,4 +1,3 @@
-// File removed after migration to BookingData.java
 package patient_appointment_management;
 
 import java.io.*;
@@ -9,13 +8,13 @@ import java.util.stream.Collectors;
 import patient_appointment_management.entities.Appointment;
 import patient_appointment_management.entities.MedicalTest;
 
-public class AppointmentDAO {
+public class BookingData {
     private List<Appointment> appointments;
     private static final String DATA_FOLDER = "data";
     private static final String APPOINTMENTS_FILE = "appointments.txt";
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     
-    public AppointmentDAO() {
+    public BookingData() {
         this.appointments = new ArrayList<>();
         createDataFolder();
         loadAppointmentsFromFile();
@@ -38,14 +37,11 @@ public class AppointmentDAO {
             Path filePath = Paths.get(DATA_FOLDER, APPOINTMENTS_FILE);
             
             try (PrintWriter writer = new PrintWriter(new FileWriter(filePath.toFile()))) {
-                
                 writer.println("=== MEDICAL APPOINTMENT BOOKING SYSTEM ===");
                 writer.println("Generated on: " + dateFormat.format(new Date()));
                 writer.println("Total Appointments: " + appointments.size());
                 writer.println("=" + "=".repeat(50));
                 writer.println();
-                
-                
                 for (int i = 0; i < appointments.size(); i++) {
                     Appointment apt = appointments.get(i);
                     writer.println("APPOINTMENT #" + (i + 1));
@@ -54,36 +50,26 @@ public class AppointmentDAO {
                     writer.println("Status: " + apt.getStatus());
                     writer.println("Created Date: " + dateFormat.format(apt.getCreatedDate()));
                     writer.println();
-                    
-                    
                     writer.println("PATIENT INFORMATION:");
                     writer.println("  Name: " + apt.getPatient().getName());
                     writer.println("  Age: " + apt.getPatient().getAge());
                     writer.println("  Gender: " + apt.getPatient().getGender());
                     writer.println("  Patient ID: " + apt.getPatient().getPatientId());
                     writer.println();
-                    
-                    
                     writer.println("DOCTOR INFORMATION:");
                     writer.println("  Doctor: Dr. " + apt.getDoctor().getName());
                     writer.println("  Specialty: " + apt.getDoctor().getSpecialty().getSpecialtyName());
                     writer.println("  Consultation Fee: $" + String.format("%.2f", apt.getDoctor().getSpecialty().getConsultationFee()));
                     writer.println();
-                    
-                    
                     writer.println("APPOINTMENT SCHEDULE:");
                     writer.println("  Date: " + apt.getTimeSlot().getDate());
                     writer.println("  Time: " + apt.getTimeSlot().getStartTime() + " - " + apt.getTimeSlot().getEndTime());
                     writer.println();
-                    
-                    
                     if (apt.getIssueDescription() != null && !apt.getIssueDescription().trim().isEmpty()) {
                         writer.println("ISSUE DESCRIPTION:");
                         writer.println("  " + apt.getIssueDescription());
                         writer.println();
                     }
-                    
-                    
                     if (!apt.getSelectedTests().isEmpty()) {
                         writer.println("MEDICAL TESTS:");
                         for (MedicalTest test : apt.getSelectedTests()) {
@@ -91,20 +77,15 @@ public class AppointmentDAO {
                         }
                         writer.println();
                     }
-                    
-                    
                     writer.println("FINANCIAL DETAILS:");
                     writer.println("  Consultation Fee: $" + String.format("%.2f", apt.getDoctor().getSpecialty().getConsultationFee()));
                     double testTotal = apt.getSelectedTests().stream().mapToDouble(MedicalTest::getCost).sum();
                     writer.println("  Tests Total: $" + String.format("%.2f", testTotal));
                     writer.println("  TOTAL AMOUNT: $" + String.format("%.2f", apt.getTotalAmount()));
-                    
                     writer.println();
                     writer.println("=" + "=".repeat(50));
                     writer.println();
                 }
-                
-
                 writer.println("SUMMARY REPORT");
                 writer.println("-".repeat(20));
                 Map<String, Long> specialtyCount = appointments.stream()
@@ -112,20 +93,15 @@ public class AppointmentDAO {
                         apt -> apt.getDoctor().getSpecialty().getSpecialtyName(),
                         Collectors.counting()
                     ));
-                
                 writer.println("Appointments by Specialty:");
                 specialtyCount.forEach((specialty, count) -> 
                     writer.println("  " + specialty + ": " + count + " appointment(s)"));
-                
                 double totalRevenue = appointments.stream().mapToDouble(Appointment::getTotalAmount).sum();
                 writer.println("Total Revenue: $" + String.format("%.2f", totalRevenue));
-                
                 writer.println();
                 writer.println("File saved on: " + dateFormat.format(new Date()));
             }
-            
             System.out.println("Appointments saved to: " + filePath.toAbsolutePath());
-            
         } catch (IOException e) {
             System.err.println("Error saving appointments to file: " + e.getMessage());
             e.printStackTrace();
@@ -189,7 +165,6 @@ public class AppointmentDAO {
     public void backupAppointments() {
         String backupFileName = "appointments_backup_" + 
             new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".txt";
-        
         try {
             Path backupPath = Paths.get(DATA_FOLDER, backupFileName);
             Files.copy(Paths.get(DATA_FOLDER, APPOINTMENTS_FILE), backupPath);

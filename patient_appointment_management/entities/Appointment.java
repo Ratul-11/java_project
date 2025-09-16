@@ -24,7 +24,7 @@ public class Appointment {
         calculateTotal();
     }
     
-    // Getters and Setters
+
     public String getAppointmentId() { return appointmentId; }
     public Patient getPatient() { return patient; }
     public Doctor getDoctor() { return doctor; }
@@ -44,20 +44,31 @@ public class Appointment {
     }
     
     public void addTest(MedicalTest test) {
-        selectedTests.add(test);
-        calculateTotal();
-    }
-    
-    public void removeTest(MedicalTest test) {
-        selectedTests.remove(test);
-        calculateTotal();
-    }
-    
-    public double calculateTotal() {
-        totalAmount = doctor.getSpecialty().getConsultationFee();
-        for (MedicalTest test : selectedTests) {
-            totalAmount += test.getCost();
+        if (test != null && !selectedTests.contains(test)) {
+            selectedTests.add(test);
+            updateTotalAmount();
         }
+    }
+
+    public void removeTest(MedicalTest test) {
+        if (selectedTests.remove(test)) {
+            updateTotalAmount();
+        }
+    }
+
+    public double calculateTotal() {
+        updateTotalAmount();
         return totalAmount;
+    }
+
+    private void updateTotalAmount() {
+        double sum = 0.0;
+        if (doctor != null && doctor.getSpecialty() != null) {
+            sum += doctor.getSpecialty().getConsultationFee();
+        }
+        for (MedicalTest test : selectedTests) {
+            sum += test.getCost();
+        }
+        totalAmount = sum;
     }
 }

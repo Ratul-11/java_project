@@ -1,17 +1,15 @@
 package patient_appointment_management.frame;
 
-import patient_appointment_management.*;
-import patient_appointment_management.entities.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.util.*;
 import java.util.List;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import patient_appointment_management.*;
+import patient_appointment_management.entities.*;
 
 public class AppointmentBookingGUI extends JFrame implements IAppointmentBooking {
-    // GUI Components
+    
     private JTextField nameField;
     private JTextField ageField;
     private JComboBox<String> genderComboBox;
@@ -26,7 +24,7 @@ public class AppointmentBookingGUI extends JFrame implements IAppointmentBooking
     private JButton showAppointmentsButton;
     private JButton deleteAppointmentButton;
     
-    // Service layer
+    
     private AppointmentService appointmentService;
     private List<JCheckBox> testCheckboxes;
     
@@ -44,7 +42,7 @@ public class AppointmentBookingGUI extends JFrame implements IAppointmentBooking
         setTitle("Medical Appointment Booking System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        // Initialize components
+        
         nameField = new JTextField(20);
         ageField = new JTextField(10);
         genderComboBox = new JComboBox<>(new String[]{"Male", "Female", "Other"});
@@ -74,7 +72,7 @@ public class AppointmentBookingGUI extends JFrame implements IAppointmentBooking
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.anchor = GridBagConstraints.WEST;
         
-        // Patient Information Section
+        
         gbc.gridx = 0; gbc.gridy = 0;
         mainPanel.add(new JLabel("Name:"), gbc);
         gbc.gridx = 1;
@@ -90,7 +88,7 @@ public class AppointmentBookingGUI extends JFrame implements IAppointmentBooking
         gbc.gridx = 1;
         mainPanel.add(genderComboBox, gbc);
         
-        // Appointment Details Section
+        
         gbc.gridx = 0; gbc.gridy = 3;
         mainPanel.add(new JLabel("Specialty:"), gbc);
         gbc.gridx = 1;
@@ -106,25 +104,25 @@ public class AppointmentBookingGUI extends JFrame implements IAppointmentBooking
         gbc.gridx = 1;
         mainPanel.add(timeSlotDropdown, gbc);
         
-        // Issue Description
+        
         gbc.gridx = 0; gbc.gridy = 6;
         mainPanel.add(new JLabel("Issue Description:"), gbc);
         gbc.gridx = 1;
         mainPanel.add(new JScrollPane(issueTextArea), gbc);
         
-        // Medical Tests
+        
         gbc.gridx = 0; gbc.gridy = 7;
         mainPanel.add(new JLabel("Medical Tests:"), gbc);
         gbc.gridx = 1;
         mainPanel.add(new JScrollPane(testsPanel), gbc);
         
-        // Total Amount
+        
         gbc.gridx = 0; gbc.gridy = 8;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         mainPanel.add(totalAmountLabel, gbc);
         
-        // Buttons
+        
         JPanel buttonPanel = new JPanel(new FlowLayout());
         buttonPanel.add(submitButton);
         buttonPanel.add(resetButton);
@@ -153,7 +151,7 @@ public class AppointmentBookingGUI extends JFrame implements IAppointmentBooking
             return;
         }
         
-        // Create a table to display appointments
+        
         String[] columnNames = {"ID", "Patient", "Doctor", "Specialty", "Date/Time", "Status", "Total"};
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
@@ -162,7 +160,7 @@ public class AppointmentBookingGUI extends JFrame implements IAppointmentBooking
             }
         };
         
-        // Populate table with appointment data
+        
         for (Appointment apt : appointments) {
             Object[] rowData = {
                 apt.getAppointmentId().substring(0, 8) + "...",
@@ -180,7 +178,7 @@ public class AppointmentBookingGUI extends JFrame implements IAppointmentBooking
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.getTableHeader().setReorderingAllowed(false);
         
-        // Create dialog to show appointments
+        
         JDialog dialog = new JDialog(this, "All Appointments", true);
         dialog.setLayout(new BorderLayout());
         
@@ -212,7 +210,7 @@ public class AppointmentBookingGUI extends JFrame implements IAppointmentBooking
             return;
         }
         
-        // Create a list of appointment descriptions for selection
+        
         String[] appointmentDescriptions = new String[appointments.size()];
         for (int i = 0; i < appointments.size(); i++) {
             Appointment apt = appointments.get(i);
@@ -225,7 +223,7 @@ public class AppointmentBookingGUI extends JFrame implements IAppointmentBooking
             );
         }
         
-        // Show selection dialog
+        
         String selectedAppointment = (String) JOptionPane.showInputDialog(
             this,
             "Select appointment to delete:",
@@ -237,7 +235,7 @@ public class AppointmentBookingGUI extends JFrame implements IAppointmentBooking
         );
         
         if (selectedAppointment != null) {
-            // Find the selected appointment
+            
             int selectedIndex = -1;
             for (int i = 0; i < appointmentDescriptions.length; i++) {
                 if (appointmentDescriptions[i].equals(selectedAppointment)) {
@@ -247,7 +245,7 @@ public class AppointmentBookingGUI extends JFrame implements IAppointmentBooking
             }
             
             if (selectedIndex >= 0) {
-                // Confirm deletion
+                
                 int confirm = JOptionPane.showConfirmDialog(
                     this,
                     "Are you sure you want to delete this appointment?\n\n" + selectedAppointment,
@@ -343,13 +341,13 @@ public class AppointmentBookingGUI extends JFrame implements IAppointmentBooking
     public double calculateTotal() {
         double total = 0.0;
         
-        // Add consultation fee
+        
         Specialty selectedSpecialty = (Specialty) specialtyDropdown.getSelectedItem();
         if (selectedSpecialty != null) {
             total += selectedSpecialty.getConsultationFee();
         }
         
-        // Add test costs
+        
         List<MedicalTest> allTests = appointmentService.getAvailableTests();
         for (int i = 0; i < testCheckboxes.size() && i < allTests.size(); i++) {
             if (testCheckboxes.get(i).isSelected()) {
@@ -381,7 +379,7 @@ public class AppointmentBookingGUI extends JFrame implements IAppointmentBooking
             TimeSlot selectedTimeSlot = (TimeSlot) timeSlotDropdown.getSelectedItem();
             Appointment appointment = new Appointment(patient, selectedDoctor, selectedTimeSlot);
             appointment.setIssueDescription(issueTextArea.getText());
-            // Add selected tests
+
             List<MedicalTest> allTests = appointmentService.getAvailableTests();
             for (int i = 0; i < testCheckboxes.size() && i < allTests.size(); i++) {
                 if (testCheckboxes.get(i).isSelected()) {

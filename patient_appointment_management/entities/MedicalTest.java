@@ -13,7 +13,7 @@ public class MedicalTest {
         this.cost = cost;
     }
     
-    // Getters and Setters
+
     public String getTestId() { return testId; }
     public String getTestName() { return testName; }
     public String getTestType() { return testType; }
@@ -26,6 +26,6 @@ public class MedicalTest {
     
     @Override
     public String toString() {
-        return testName + " ($" + cost + ")";
+        return String.format("%s ($%.2f)", testName, cost);
     }
 }

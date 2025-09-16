@@ -18,7 +18,7 @@ public class Doctor {
         this.availability = new ArrayList<>();
     }
     
-    // Getters and Setters
+
     public String getDoctorId() { return doctorId; }
     public String getName() { return name; }
     public Specialty getSpecialty() { return specialty; }
@@ -30,22 +30,26 @@ public class Doctor {
     public void setExperience(int experience) { this.experience = experience; }
     
     public void addTimeSlot(TimeSlot slot) {
-        availability.add(slot);
+        if (slot != null && !availability.contains(slot)) {
+            availability.add(slot);
+        }
     }
-    
+
     public void removeTimeSlot(TimeSlot slot) {
         availability.remove(slot);
     }
-    
+
     public boolean isAvailable(Date date, LocalTime time) {
-        return availability.stream()
-            .anyMatch(slot -> slot.getDate().equals(date) && 
-                     slot.getStartTime().equals(time) && 
-                     slot.isAvailable());
+        for (TimeSlot slot : availability) {
+            if (slot.getDate().equals(date) && slot.getStartTime().equals(time) && slot.isAvailable()) {
+                return true;
+            }
+        }
+        return false;
     }
-    
+
     @Override
     public String toString() {
-        return "Dr. " + name + " (" + specialty.getSpecialtyName() + ")";
+        return String.format("Dr. %s (%s)", name, specialty.getSpecialtyName());
     }
 }

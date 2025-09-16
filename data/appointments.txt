@@ -1,19 +1,19 @@
 === MEDICAL APPOINTMENT BOOKING SYSTEM ===
-Generated on: 2025-09-16 18:08:58
-Total Appointments: 1
+Generated on: 2025-09-16 18:22:55
+Total Appointments: 2
 ===================================================
 
 APPOINTMENT #1
 ------------------------------
-Appointment ID: 912d5b1b-6c52-47db-9807-d4d698488f77
+Appointment ID: 10baf4c9-1b4e-4c3c-a79c-080a4a47a273
 Status: SCHEDULED
-Created Date: 2025-09-16 18:08:28
+Created Date: 2025-09-16 18:22:26
 
 PATIENT INFORMATION:
-  Name: rat
-  Age: 23
+  Name: ishrak
+  Age: 22
   Gender: Male
-  Patient ID: a6dde884-e55e-4e79-a539-34336ecb0a25
+  Patient ID: f3f063a2-e3e5-4aea-af8c-d7cf8bd3b0a3
 
 DOCTOR INFORMATION:
   Doctor: Dr. John Smith
@@ -21,27 +21,65 @@ DOCTOR INFORMATION:
   Consultation Fee: $150.00
 
 APPOINTMENT SCHEDULE:
-  Date: Tue Sep 16 18:07:45 GMT+06:00 2025
-  Time: 09:00 - 10:00
+  Date: Tue Sep 16 18:21:51 GMT+06:00 2025
+  Time: 11:00 - 12:00
 
 ISSUE DESCRIPTION:
-  asdf
+  complicated ektu
 
 MEDICAL TESTS:
   - Blood Test ($50.00)
-  - ECG ($60.00)
+  - X-Ray ($80.00)
 
 FINANCIAL DETAILS:
   Consultation Fee: $150.00
-  Tests Total: $110.00
-  TOTAL AMOUNT: $260.00
+  Tests Total: $130.00
+  TOTAL AMOUNT: $280.00
+
+===================================================
+
+APPOINTMENT #2
+------------------------------
+Appointment ID: a87ad3d6-053f-4e9a-890e-2b1d4c6b3528
+Status: SCHEDULED
+Created Date: 2025-09-16 18:22:55
+
+PATIENT INFORMATION:
+  Name: ratul
+  Age: 23
+  Gender: Male
+  Patient ID: fa05f848-b51d-4dd4-93f1-118d879b7879
+
+DOCTOR INFORMATION:
+  Doctor: Dr. Sarah Johnson
+  Specialty: Dermatology
+  Consultation Fee: $120.00
+
+APPOINTMENT SCHEDULE:
+  Date: Tue Sep 16 18:21:51 GMT+06:00 2025
+  Time: 09:00 - 10:00
+
+ISSUE DESCRIPTION:
+  ektu comp[licated
+
+MEDICAL TESTS:
+  - Blood Test ($50.00)
+  - X-Ray ($80.00)
+  - ECG ($60.00)
+  - Ultrasound ($100.00)
+
+FINANCIAL DETAILS:
+  Consultation Fee: $120.00
+  Tests Total: $290.00
+  TOTAL AMOUNT: $410.00
 
 ===================================================
 
 SUMMARY REPORT
 --------------------
 Appointments by Specialty:
+  Dermatology: 1 appointment(s)
   Cardiology: 1 appointment(s)
-Total Revenue: $260.00
+Total Revenue: $690.00
 
-File saved on: 2025-09-16 18:08:58
+File saved on: 2025-09-16 18:22:55

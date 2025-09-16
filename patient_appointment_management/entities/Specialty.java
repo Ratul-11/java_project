@@ -12,7 +12,7 @@ public class Specialty {
         this.consultationFee = consultationFee;
     }
     
-    // Getters and Setters
+
     public String getSpecialtyId() { return specialtyId; }
     public String getSpecialtyName() { return specialtyName; }
     public String getDescription() { return description; }

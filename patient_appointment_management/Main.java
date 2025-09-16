@@ -1,8 +1,8 @@
 package patient_appointment_management;
 
-import patient_appointment_management.frame.AppointmentBookingGUI;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import patient_appointment_management.frame.AppointmentBookingGUI;
 
 public class Main {
     public static void main(String[] args) {
@@ -12,7 +12,7 @@ public class Main {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            
+
             new AppointmentBookingGUI().setVisible(true);
         });
     }
